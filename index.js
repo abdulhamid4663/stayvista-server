@@ -79,6 +79,13 @@ async function run() {
       }
     })
 
+    // GET user role
+    app.get('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const result = await usersCollection.findOne({ email });
+      res.send(result);
+    })
+
     // Save or modify user email, status in DB
     app.put('/users/:email', async (req, res) => {
       const email = req.params.email
@@ -104,6 +111,14 @@ async function run() {
       res.send(result);
     })
 
+    // GET all host rooms
+    app.get('/rooms/:email', verifyToken, async (req, res) => {
+      const email = req.params.email;
+      const query = { 'host.email': email };
+      const result = await roomsCollection.find(query).toArray();
+      res.send(result);
+    })
+
     // GET a single room
     app.get('/room/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
@@ -112,8 +127,12 @@ async function run() {
       res.send(result);
     })
 
-
-
+    // POST a room in database
+    app.post('/rooms', verifyToken, async (req, res) => {
+      const room = req.body;
+      const result = await roomsCollection.insertOne(room);
+      res.send(result);
+    })
 
 
 
